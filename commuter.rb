@@ -59,21 +59,17 @@ if is_raining || start_of_rain
   stoppages = calculate_stoppages(next_hour, start_of_rain)
 end
 
-if !is_raining && start_of_rain
-  out = "#{intesity_to_str(start_of_rain[:intensity], start_of_rain[:type])} in #{time_diff(now, start_of_rain[:time])} minutes."
+
+def stoppage_str(stoppages)
   if !stoppages.empty?
-    out += " Stopping in #{time_diff(now, stoppages.first[0])} minutes for #{time_diff(stoppages.first[0], stoppages.first[1])} minutes"
+    " Stopping in #{time_diff(now, stoppages.first[0])} minutes for #{time_diff(stoppages.first[0], stoppages.first[1])} minutes."
+  else
+    " Not forcast to stop in the next hour."
   end
-  puts out
 end
 
-#is it raining?
-#  - yes
-#    - when will it stop?
-#    - for how long?
-#  - no
-#    - Will it start within the hour?
-#      - yes
-#        - GOTO it is raining
-#      - no
-#        - no update
+if is_raining
+  puts "Currently #{intesity_to_str(next_hour.first[:intensity], next_hour.first[:type])}. #{stoppage_str(stoppages)}"
+elsif start_of_rain
+  puts "#{intesity_to_str(start_of_rain[:intensity], start_of_rain[:type])} in #{time_diff(now, start_of_rain[:time])} minutes. #{stoppage_str(stoppages)}"
+end
