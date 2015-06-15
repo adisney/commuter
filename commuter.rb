@@ -11,6 +11,21 @@ end
 
 probabilities = next_hour.map { |m| m[:probability] }
 
+def calculate_starttages(next_hour)
+  starttages = []
+  starttage = []
+  next_hour.each do |m|
+    if will_rain(m)
+      starttage << m[:intensity]
+    elsif !starttage .empty?
+      starttages << starttage
+      starttage = []
+    end
+  end
+  starttages << starttage if !starttage.empty?
+  starttages 
+end
+
 def calculate_stoppages(next_hour, start_of_rain)
   stoppages = []
   stoppage = []
@@ -34,18 +49,18 @@ def time_diff(start, stop)
   (stop - start) / 1000 / 60
 end
 
-def intesity_to_str(intensity, type)
+def intesity_to_str(intensity, type = "")
   string = ""
   if intensity < 0.002
-    string = "No"
+    string = "no"
   elsif intensity < 0.017
-    string = "Light"
+    string = "light"
   elsif intensity < 0.1
-    string = "Moderate"
+    string = "moderate"
   else  
-    string = "Heavy"
+    string = "heavy"
   end
-  "#{string} #{type}"
+  "#{string}#{type.empty? ? "" : (" " + type)}"
 end
 
 def will_rain(m)
@@ -56,20 +71,31 @@ is_raining = probabilities[0] >= 0.9
 start_of_rain = (next_hour.select { |m| will_rain(m) }).first
 
 if is_raining || start_of_rain
+  starttages = calculate_starttages(next_hour)
   stoppages = calculate_stoppages(next_hour, start_of_rain)
 end
 
 
 def stoppage_str(stoppages)
   if !stoppages.empty?
-    " Stopping in #{time_diff(now, stoppages.first[0])} minutes for #{time_diff(stoppages.first[0], stoppages.first[1])} minutes."
+    return " Stopping in #{time_diff(now, stoppages.first[0])} minutes for #{time_diff(stoppages.first[0], stoppages.first[1])} minutes."
   else
-    " Not forcast to stop in the next hour."
+    return " Not forcast to stop within an hour."
   end
 end
 
-if is_raining
-  puts "Currently #{intesity_to_str(next_hour.first[:intensity], next_hour.first[:type])}. #{stoppage_str(stoppages)}"
-elsif start_of_rain
-  puts "#{intesity_to_str(start_of_rain[:intensity], start_of_rain[:type])} in #{time_diff(now, start_of_rain[:time])} minutes. #{stoppage_str(stoppages)}"
+def rain_report(next_hour, is_raining, start_of_rain)
+  if is_raining
+    return "Currently #{intesity_to_str(next_hour.first[:intensity], next_hour.first[:type])}"
+  elsif start_of_rain
+    return "#{intesity_to_str(start_of_rain[:intensity].capitalize, start_of_rain[:type])} in #{time_diff(now, start_of_rain[:time])} minutes."
+  end
 end
+
+def turning_to(starttages)
+  if (starttages)
+    "Turning to #{intesity_to_str(starttages.first.max)}."
+  end
+end
+
+puts "#{rain_report(next_hour, is_raining, start_of_rain)}. #{turning_to(starttages)}#{stoppage_str(stoppages)}"
