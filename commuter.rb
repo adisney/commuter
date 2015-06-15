@@ -49,7 +49,7 @@ def time_diff(start, stop)
   (stop - start) / 1000 / 60
 end
 
-def intesity_to_str(intensity, type = "")
+def intensity(intensity, type = "")
   string = ""
   if intensity < 0.002
     string = "no"
@@ -76,7 +76,7 @@ if is_raining || start_of_rain
 end
 
 
-def stoppage_str(stoppages)
+def stoppage_report(stoppages)
   if !stoppages.empty?
     return " Stopping in #{time_diff(now, stoppages.first[0])} minutes for #{time_diff(stoppages.first[0], stoppages.first[1])} minutes."
   else
@@ -86,16 +86,16 @@ end
 
 def rain_report(next_hour, is_raining, start_of_rain)
   if is_raining
-    return "Currently #{intesity_to_str(next_hour.first[:intensity], next_hour.first[:type])}"
+    return "Currently #{intensity(next_hour.first[:intensity], next_hour.first[:type])}"
   elsif start_of_rain
-    return "#{intesity_to_str(start_of_rain[:intensity].capitalize, start_of_rain[:type])} in #{time_diff(now, start_of_rain[:time])} minutes."
+    return "#{intensity(start_of_rain[:intensity].capitalize, start_of_rain[:type])} in #{time_diff(now, start_of_rain[:time])} minutes."
   end
 end
 
 def turning_to(starttages)
   if (starttages)
-    "Turning to #{intesity_to_str(starttages.first.max)}."
+    "Turning to #{intensity(starttages.first.max)}."
   end
 end
 
-puts "#{rain_report(next_hour, is_raining, start_of_rain)}. #{turning_to(starttages)}#{stoppage_str(stoppages)}"
+puts "#{rain_report(next_hour, is_raining, start_of_rain)}. #{turning_to(starttages)}#{stoppage_report(stoppages)}"
