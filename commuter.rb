@@ -49,10 +49,10 @@ def intesity_to_str(intensity, type)
 end
 
 def will_rain(m)
-  m[:probability] > 0.8
+  m[:probability] > 0.75
 end
 
-is_raining = probabilities[0] == 1
+is_raining = probabilities[0] >= 0.9 
 start_of_rain = (next_hour.select { |m| will_rain(m) }).first
 
 if is_raining || start_of_rain
