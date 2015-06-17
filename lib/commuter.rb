@@ -80,7 +80,7 @@ def stoppage_report(stoppages)
   if !stoppages.empty?
     return " Stopping in #{time_diff(now, stoppages.first[0])} minutes for #{time_diff(stoppages.first[0], stoppages.first[1])} minutes."
   else
-    return " Not forcast to stop within an hour."
+    return " Not forecast to stop within an hour."
   end
 end
 
