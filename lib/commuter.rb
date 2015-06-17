@@ -64,7 +64,7 @@ def intensity(intensity, type = "")
 end
 
 def will_rain(m)
-  m[:probability] > 0.75
+  m[:probability] >= 0.75
 end
 
 is_raining = probabilities[0] >= 0.9 
