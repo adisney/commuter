@@ -88,7 +88,7 @@ def rain_report(next_hour, is_raining, start_of_rain)
   if is_raining
     return "Currently #{intensity(next_hour.first[:intensity], next_hour.first[:type])}"
   elsif start_of_rain
-    return "#{intensity(start_of_rain[:intensity].capitalize, start_of_rain[:type])} in #{time_diff(now, start_of_rain[:time])} minutes."
+    return "#{intensity(start_of_rain[:intensity], start_of_rain[:type]).capitalize} in #{time_diff(now, start_of_rain[:time])} minutes."
   end
 end
 
