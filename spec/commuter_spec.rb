@@ -3,7 +3,6 @@ require 'commuter'
 describe "commuter" do
   let (:commuter) { Commuter.new }
   before( :each ) do
-    allow(STDOUT).to receive(:puts)
     allow(commuter).to receive(:now).and_return 1234567890000
   end
 
@@ -56,6 +55,14 @@ describe "commuter" do
 
     it "should indicate when not expected to stop within an hour" do
       expect(commuter.stoppage_report([])).to eq " Not forecast to stop by hours end."
+    end
+  end
+
+  describe "produce report" do
+    let (:next_hour) {[{time: 1234567890000, probability: 0.40, intensity: 0.003, type: "rain"},{time: 1234567950000, probability: 0.42, intensity: 0.003, type: "rain"},{time: 1234568010002, probability: 0.83, intensity: 0.003, type: "rain"},{time: 1234568070002, probability: 0.88, intensity: 0.018, type: "rain"},{time: 1234569690000, probability:0.30, intensity:0.001, type:"rain"},{time:1234570230000, probability:0.30, intensity:0.001, type:"rain"},{time:1234570290000, probability:0.80, intensity:0.018, type:"rain"}]}
+
+    it "should report on future rain" do
+      expect(commuter.produce_report(next_hour)).to eq "Light rain in 2 minutes. Turning to moderate. Stopping in 30 minutes for 9 minutes."
     end
   end
 end

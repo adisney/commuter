@@ -1,6 +1,16 @@
 require 'json'
 require 'time'
 
+def get_rain_data
+  next_hour = []
+  open('./next_hour.json') do |f|
+    f.readlines.map do |line|
+      next_hour << JSON.parse(line, :symbolize_names => true)
+    end
+  end
+  return next_hour
+end
+
 class Commuter
 
   def calculate_starttages(next_hour)
@@ -81,15 +91,8 @@ class Commuter
     end
   end
 
-  def produce_report()
+  def produce_report(next_hour)
     #{time: (.time * 1000), probability: .precipProbability, intensity: .precipIntensity, type: .precipType}
-    next_hour = []
-    open('./next_hour.json') do |f|
-      f.readlines.map do |line|
-        next_hour << JSON.parse(line, :symbolize_names => true)
-      end
-    end
-
     probabilities = next_hour.map { |m| m[:probability] }
 
     is_raining = probabilities[0] >= 0.9 
@@ -98,10 +101,10 @@ class Commuter
     if is_raining || start_of_rain
       starttages = calculate_starttages(next_hour)
       stoppages = calculate_stoppages(next_hour, start_of_rain)
-    end
 
-    return "#{rain_report(next_hour, is_raining, start_of_rain)}. #{turning_to(starttages)}#{stoppage_report(stoppages)}"
+      return "#{rain_report(next_hour, is_raining, start_of_rain)}. #{turning_to(starttages)}#{stoppage_report(stoppages)}"
+    end
   end
 end
 
-Commuter.new.produce_report
+STDOUT.puts Commuter.new.produce_report get_rain_data
